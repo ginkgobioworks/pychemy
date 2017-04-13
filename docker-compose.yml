@@ -1,0 +1,19 @@
+version: '2.1'
+
+services:
+  pychemy:
+    build:
+      context: .
+      args:
+        - GIT_USER_NAME
+        - GIT_USER_EMAIL
+    volumes:
+      - caches:/root/.cache
+      - .:${PYCHEMY_HOME:-/usr/src/pychemy}
+    tty:
+      true
+    ports:
+      - ${SERVER_PORT:-8080}:${SERVER_PORT:-8080}
+
+volumes:
+  caches:

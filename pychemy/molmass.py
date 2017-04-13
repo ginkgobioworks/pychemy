@@ -45,7 +45,7 @@ For command line usage run ``python molmass.py --help``
 
 :Author: `Christoph Gohlke <http://www.lfd.uci.edu/~gohlke/>`_
 
-:Version: 2013.01.18
+:Version: 0.2.0
 
 Requirements
 ------------
@@ -91,7 +91,6 @@ from functools import reduce
 
 from elements import ELEMENTS, Isotope
 
-__version__ = '2013.01.18'
 __docformat__ = 'restructuredtext en'
 __all__ = ['analyze', 'Formula', 'FormulaError']
 

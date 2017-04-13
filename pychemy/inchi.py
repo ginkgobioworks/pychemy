@@ -1,8 +1,9 @@
 import re
 from decimal import Decimal
-from inchi_converter import convert_inchi_to_formula
-from adducts import positive_mode_adducts, negative_mode_adducts
-import molmass
+
+from .inchi_converter import convert_inchi_to_formula
+from .adducts import positive_mode_adducts, negative_mode_adducts
+import .molmass
 
 
 class Formula_Base(object):

@@ -1,0 +1,30 @@
+language: python
+sudo: required
+services:
+  - docker
+python:
+  - 2.7
+env:
+  global:
+    - DOCKER_COMPOSE_VERSION=1.12.0
+  matrix:
+    - TOXENV=py27-django16
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+install:
+  - make image
+script:
+  - make test-tox-ext
+deploy:
+  provider: pypi
+  user: ginkgodev
+  distributions: sdist bdist_wheel
+  skip_upload_docs: true
+  password:
+    secure: Uv+9pXjjv7qdFYpSA2yfD6dM201sipD8JA6B2WK1YxHFoCZYZzt/0TCQ+amGpJBcwokGVJ+A2C0UnVcKlVXY/pxBloZ0Vm6FOu33wLvprG75yyk8QqGIErrmUiohn2pIjOXYd/r9fB/tQ3OZ1R1AJ/+1qmDyQPlT8n0cbYbYqWdHR+oE7SjGa6hY5OQGPZrv9x35tOk1q5PGdBGRwyWWihOsPsqxtuwbPzGJ6wDwfru5TEjQqp5oc9VN02XyqrDxLOVc9bhRF8ux73uZ3M9yZgtbeKaXjisvEFEcaNd1oE0dxsY+VoCUAQ8cfZe14ZAqHngDpFOAr3ozbIG9LlUS+gkCzpW7uH9s+uwII4sBF+NZW5DQbtgK0gJKg83Usq8DwRA/BKlSomfkk/NsLq6HaukFqk3pXGa4iHUf6oSydnzcVJ4xVoiPVfmGDjA3auNWaew6PCwl+aOGQ3DhFWe0o5GxXflu8qXgvFYWWDWIKfshICa6tSOzfDr9YjZ3/2pOc0FLBJzmt63CRMeEgYM/xljBg9qgmhKBpD48cCnSrWg8RGb+ohihekOCL/SJHui6RMT2vxDUFMYhKCaRpwiBRtCSDQb0AzEBQU9laxhmL8XebEWZTs7DLHRE5+W/ZlHNfqMTLI2Rd6L+9zZ68RCsg0TIfoEiuTtB0KJ4bOqDpIk=
+  on:
+    tags: true
+    repo: ginkgobioworks/curious
