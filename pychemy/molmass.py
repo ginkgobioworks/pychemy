@@ -45,7 +45,7 @@ For command line usage run ``python molmass.py --help``
 
 :Author: `Christoph Gohlke <http://www.lfd.uci.edu/~gohlke/>`_
 
-:Version: 0.2.0
+:Version: 0.3.0
 
 Requirements
 ------------
