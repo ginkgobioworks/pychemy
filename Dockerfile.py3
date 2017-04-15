@@ -19,8 +19,6 @@ RUN git config --global user.name "$GIT_USER_NAME" \
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV PYCHEMY_HOME=/usr/src/pychemy
-ENV SERVER_IP=0.0.0.0
-ENV SERVER_PORT=8081
 
 RUN mkdir -p $PYCHEMY_HOME
 WORKDIR $PYCHEMY_HOME
