@@ -31,7 +31,6 @@ RUN pip3 install --requirement requirements.txt
 COPY . ./
 RUN pip3 install --editable .
 
-EXPOSE $SERVER_PORT
 CMD ["make", "test"]
 
 # vim: set ft=dockerfile :
