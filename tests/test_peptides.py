@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import unittest, tempfile, os
 from pychemy.peptides import *
 from pychemy.amino_acids import AMINO_ACIDS
@@ -15,7 +17,7 @@ class Peptides_Testing(unittest.TestCase):
   def test_get_next_aa_with_valid_aa_sequence(self):
     for key in AMINO_ACIDS:
       if key.mod != 'N-term' and key.mod != 'C-term':
-        print type(key.mod), key.mod
+        print(type(key.mod), key.mod)
         self.assertEqual(get_next_aa(key.mod + 'A'), AMINO_ACIDS[key.mod])
 
   def test_get_next_aa_with_single_invalid_aa(self):

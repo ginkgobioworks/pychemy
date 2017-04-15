@@ -1,19 +1,22 @@
 language: python
 sudo: required
-services:
-  - docker
-python:
-  - 2.7
 env:
   global:
     - DOCKER_COMPOSE_VERSION=1.12.0
-  matrix:
-    - TOXENV=py27-django16
+matrix:
+  include:
+  - python: 2.7
+    env: TOXENV=py2
+    services: docker
+  - python: 3.5
+    env: TOXENV=py3
+    services: docker
 before_install:
-  - sudo rm /usr/local/bin/docker-compose
+  # Install most up-to-date docker-compose--the default one does not support v2.1 syntax
+  - sudo rm -vf /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
+  - sudo mv -vf docker-compose /usr/local/bin
 install:
   - make image
 script:

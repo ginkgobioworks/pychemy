@@ -1,8 +1,10 @@
-from elements import ELEMENTS
-import networkx as nx
 from collections import OrderedDict
+
+import networkx as nx
 import openbabel
 import matplotlib.pyplot as plt
+
+from .elements import ELEMENTS
 
 class chem_graph():
 

@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 # adducts specified as (name, mz_mul, mz_off) tuples. based on monoisotopic
 # neutral mz.
@@ -66,7 +67,7 @@ def positive_mode_adducts(func):
   adduct name, mass multiplier, and mass offset as arguments.
 
   >>> def a(name, mul, off):
-  ...   if name == 'M+H': print 'x*%.2f+(%.4f)' % (mul, off)
+  ...   if name == 'M+H': print('x*%.2f+(%.4f)' % (mul, off))
   >>> positive_mode_adducts(a)
   x*1.00+(1.0073)
   """
@@ -78,7 +79,7 @@ def negative_mode_adducts(func):
   adduct name, mass multiplier, and mass offset as arguments.
 
   >>> def a(name, mul, off):
-  ...   if name == 'M-H': print 'x*%.2f+(%.4f)' % (mul, off)
+  ...   if name == 'M-H': print('x*%.2f+(%.4f)' % (mul, off))
   >>> negative_mode_adducts(a)
   x*1.00+(-1.0073)
   """

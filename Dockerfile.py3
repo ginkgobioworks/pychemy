@@ -1,14 +1,15 @@
 # Development Dockerfile to make testing easier under a standardized environment.
 # XXX Do not use for production as-is
 
-FROM python:2.7
+FROM python:3.5
 LABEL maintainer Ginkgo Bioworks <devs@ginkgobioworks.com>
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install --assume-yes apt-utils
 RUN apt-get install --assume-yes \
-    swig \
-    libopenbabel-dev
+    libopenbabel-dev \
+    openbabel \
+    swig
 
 ARG GIT_USER_NAME="Pychemy Default"
 ARG GIT_USER_EMAIL="devs@ginkgobioworks.com"
@@ -24,11 +25,15 @@ ENV SERVER_PORT=8081
 RUN mkdir -p $PYCHEMY_HOME
 WORKDIR $PYCHEMY_HOME
 
-RUN pip install pip-tools==1.9.0rc2
+RUN pip3 install pip-tools==1.9.0
+
 COPY requirements.txt ./
-RUN pip install --requirement requirements.txt
+RUN pip3 install --requirement requirements.txt
 
 COPY . ./
-RUN pip install --editable .
+RUN pip3 install --editable .
+
 EXPOSE $SERVER_PORT
 CMD ["make", "test"]
+
+# vim: set ft=dockerfile :

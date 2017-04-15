@@ -6,6 +6,7 @@
 
 PYCHEMY_HOME ?= /usr/src/pychemy
 SETUP = python setup.py
+TOXENV ?= py2
 
 all: test-tox
 
@@ -25,10 +26,10 @@ test:
 	python setup.py nosetests
 
 test-tox:
-	tox
+	TOXENV=${TOXENV} tox
 
 bump/major bump/minor bump/patch:
-	bumpversion --verbose $(@F)
+	bumpversion --verbose ${@F}
 
 
 release: clean sdist bdist_wheel
@@ -42,12 +43,12 @@ bdist_wheel:
 	${SETUP} bdist_wheel
 	ls -l dist
 
-MAKE_EXT = docker-compose run --rm pychemy make -C ${PYCHEMY_HOME}
+MAKE_EXT = docker-compose run --rm pychemy-${TOXENV} make -C ${PYCHEMY_HOME}
 
 # Generically execute make targets from outside the Docker container
 %-ext: image
 	${MAKE_EXT} $*
 
-# Build the image
+# Build the images
 image:
-	GIT_USER_NAME=`git config user.name` GIT_USER_EMAIL=`git config user.email` docker-compose build --pull
+	GIT_USER_NAME=`git config user.name` GIT_USER_EMAIL=`git config user.email` docker-compose build --pull pychemy-${TOXENV}

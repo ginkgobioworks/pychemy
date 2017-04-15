@@ -54,7 +54,6 @@ Requirements
 
 Examples
 --------
->>> from molmass import Formula
 >>> f = Formula("D2O")  # heavy water
 >>> f.formula  # hill notation
 '[2H]2O'
@@ -89,7 +88,9 @@ import math
 import copy
 from functools import reduce
 
-from elements import ELEMENTS, Isotope
+from six.moves import range
+
+from .elements import ELEMENTS, Isotope
 
 __docformat__ = 'restructuredtext en'
 __all__ = ['analyze', 'Formula', 'FormulaError']
@@ -128,8 +129,7 @@ def analyze(formula, maxatoms=250):
             if len(s) > 1:
                 result.extend((
                     "\nMass Distribution",
-                    "\nMost abundant mass: %.*f (%.3f%%)" % (prec, s.peak[0],
-                                                             s.peak[1]*100),
+                    "\nMost abundant mass: %.*f (%.3f%%)" % (prec, s.peak[0], s.peak[1] * 100),
                     "Mean mass: %.*f\n" % (prec, s.mean),
                     str(s)))
 
@@ -264,8 +264,8 @@ class Formula(object):
         --------
         >>> Formula("H")._elements
         {'H': {0: 1}}
-        >>> Formula("[2H]2O")._elements
-        {'H': {2: 2}, 'O': {0: 1}}
+        >>> sorted(Formula("[2H]2O")._elements.items())
+        [('H', {2: 2}), ('O', {0: 1})]
 
         """
         formula = self._formula
@@ -275,8 +275,7 @@ class Formula(object):
         validchars = set("([{<123456789ABCDEFGHIKLMNOPRSTUVWXYZ")
 
         if not formula[0] in validchars:
-            raise FormulaError("unexpected character '%s'" % formula[0],
-                               formula, 0)
+            raise FormulaError("unexpected character '%s'" % formula[0], formula, 0)
 
         validchars |= set("]})>0abcdefghiklmnoprstuy")
 
@@ -289,9 +288,8 @@ class Formula(object):
         while i:
             i -= 1
             char = formula[i]
-            if not char in validchars:
-                raise FormulaError(
-                    "unexpected character '%s'" % char, formula, i)
+            if char not in validchars:
+                raise FormulaError("unexpected character '%s'" % char, formula, i)
             if char in "([{<":
                 level -= 1
                 if level < 0 or num != 0:
@@ -321,7 +319,7 @@ class Formula(object):
                 ele = char + ele
                 if num == 0:
                     num = 1
-                if not ele in ELEMENTS:
+                if ele not in ELEMENTS:
                     raise FormulaError("unknown symbol '%s'" % ele, formula, i)
                 iso = ''
                 j = i
@@ -334,8 +332,7 @@ class Formula(object):
                 if iso:
                     iso = int(iso)
                     if iso not in ELEMENTS[ele].isotopes:
-                        raise FormulaError(
-                            "unknown isotope '%i%s'" % (iso, ele), formula, i)
+                        raise FormulaError("unknown isotope '%i%s'" % (iso, ele), formula, i)
                 else:
                     iso = 0
                 number = num * counts[level]
@@ -611,45 +608,26 @@ class Formula(object):
 
         Examples
         --------
-        >>> def _(spectrum):
-        ...     for key, val in spectrum.items():
-        ...         if round(val[1],6) > 0:
-        ...             print("%.4f, %.4f, %.6f%%" % (key, val[0], val[1]*100))
-        >>> _(Formula("C10H14N5O7P").high_resolution_spectrum(3,minfract=-4))
+        >>> for key, val in sorted(
+        ...   Formula("C10H14N5O7P").high_resolution_spectrum(3.0, minfract=1e-4).items()
+        ... ):
+        ...   if round(val[1], 4) > 0:
+        ...     print("%.4f, %.4f, %.6f%%" % (key, val[0], val[1] * 100.0))
         347.0631, 347.0631, 86.532398%
         348.0601, 348.0601, 1.598077%
         348.0665, 348.0665, 9.589846%
         348.0694, 348.0694, 0.139333%
-        349.0572, 349.0572, 0.011805%
-        349.0635, 349.0635, 0.177105%
-        349.0673, 349.0673, 1.247338%
-        349.0698, 349.0698, 0.480735%
-        349.0727, 349.0727, 0.015441%
-        349.0756, 349.0756, 0.000104%
-        350.0605, 350.0605, 0.001308%
-        350.0644, 350.0644, 0.023007%
-        350.0669, 350.0669, 0.008878%
-        350.0707, 350.0707, 0.137761%
-        350.0733, 350.0733, 0.016359%
-        350.0761, 350.0761, 0.000774%
-        351.0614, 351.0614, 0.000170%
-        351.0639, 351.0639, 0.000066%
-        351.0677, 351.0677, 0.002541%
-        351.0703, 351.0703, 0.000302%
-        351.0716, 351.0716, 0.007674%
-        351.0741, 351.0741, 0.006877%
-        351.0768, 351.0768, 0.000507%
-        352.0686, 352.0686, 0.000142%
-        352.0711, 352.0711, 0.000127%
-        352.0749, 352.0749, 0.000845%
-        352.0775, 352.0775, 0.000217%
+        349.0635, 349.0635, 0.174061%
+        349.0673, 349.0673, 1.244765%
+        349.0698, 349.0698, 0.462721%
+        350.0707, 350.0707, 0.136121%
         """
         spectrum = {0: [0.0, 1.0]}
         elements = self._elements
 
-        for symbol in elements:
+        for symbol in sorted(elements.keys()):
             ele = ELEMENTS[symbol]
-            for massnumber, count in elements[symbol].items():
+            for massnumber, count in sorted(elements[symbol].items()):
                 if massnumber:
                     # specific isotope
                     iso = ele.isotopes[massnumber]
@@ -665,7 +643,7 @@ class Formula(object):
                         k = m
                         existing_keys = spectrum.keys()
                         for existing_key in existing_keys:
-                            if (abs(existing_key-k)*1.0/k)*1e6 <= ppm:
+                            if (abs(existing_key - k) * 1.0 / k) * 1.0e6 <= ppm:
                                 s = spectrum[existing_key]
                                 s[0] = (s[1] * s[0] + f * m) / (s[1] + f)
                                 s[1] += f
@@ -677,7 +655,7 @@ class Formula(object):
 
                 else:
                     # mixture of isotopes
-                    isotopes = ele.isotopes.values()
+                    isotopes = sorted(ele.isotopes.values(), key=lambda ix: ix.mass)
                     for _ in range(count):
                         for key in reversed(sorted(spectrum)):
                             t = spectrum[key]
@@ -690,9 +668,9 @@ class Formula(object):
 
                                 # insert into spectrum, look for key with mass diff bounded by ppm
                                 k = m
-                                existing_keys = spectrum.keys()
+                                existing_keys = sorted(spectrum.keys())
                                 for existing_key in existing_keys:
-                                    if (abs(existing_key-k)*1.0/k)*1e6 <= ppm:
+                                    if (abs(existing_key - k) * 1.0 / k) * 1e6 <= ppm:
                                         s = spectrum[existing_key]
                                         s[0] = (s[1] * s[0] + f * m) / (s[1] + f)
                                         s[1] += f
@@ -767,7 +745,7 @@ class Spectrum(dict):
         # base is first one in array with highest fraction
         base_mass = v[0][0]
         base_frac = v[0][1]
-        r = [(t[0],t[1]/base_frac) for t in v if t[0] != base_mass]
+        r = [(t[0], t[1] / base_frac) for t in v if t[0] != base_mass]
         return [t for t in r if t[1] >= min_intensity_ratio]
 
     @lazyattr
@@ -798,9 +776,9 @@ class Spectrum(dict):
         prec = precision_digits(self.peak[0], 9)
         norm = 100.0 / self.peak[1]
         for mass, fraction in self.values():
-            if round(fraction*norm,6) > 0:
+            if round(fraction * norm, 6) > 0:
                 result.append("%-13.*f   %11.6f   %12.6f" % (
-                    prec, mass, fraction*100.0, fraction*norm))
+                    prec, mass, fraction * 100.0, fraction * norm))
         return "\n".join(result)
 
 
@@ -877,7 +855,7 @@ def from_string(formula, groups=None):
     >>> from_string("D2O")
     '[2H]2O'
     >>> from_string("O: 0.26, 30Si: 0.74")
-    '[30Si]3O2'
+    'O2[30Si]3'
     >>> from_string("PhNH2.HCl")
     '(C6H5)NH2HCl'
     >>> from_string("CuSO4.5H2O")
@@ -985,11 +963,11 @@ def from_fractions(fractions, maxcount=10, precision=1e-4):
     >>> from_fractions({'H': 0.112, 'O': 0.888})
     'H2O'
     >>> from_fractions({'D': 0.2, 'O': 0.8})
-    '[2H]2O'
+    'O[2H]2'
     >>> from_fractions({'H': 8.97, 'C': 59.39, 'O': 31.64})
-    'H9C5O2'
+    'C5H9O2'
     >>> from_fractions({'O': 0.26, '30Si': 0.74})
-    '[30Si]3O2'
+    'O2[30Si]3'
 
     """
     if not fractions:
@@ -1031,7 +1009,7 @@ def from_fractions(fractions, maxcount=10, precision=1e-4):
     best = 1e6
     factor = 1
     for i in range(1, maxcount):
-        x = sum(abs((i*n) - round(i*n)) for n in numbers.values())
+        x = sum(abs((i * n) - round(i * n)) for n in numbers.values())
         if x < best:
             best = x
             factor = i
@@ -1039,7 +1017,7 @@ def from_fractions(fractions, maxcount=10, precision=1e-4):
                 break
 
     formula = []
-    for symbol, number in numbers.items():
+    for symbol, number in sorted(numbers.items()):
         count = int(round(factor * number))
         if count > 1:
             formula.append("%s%i" % (symbol, count))
@@ -1108,7 +1086,7 @@ def from_oligo(sequence, dtype='ssdna'):
     >>> print(f.formula, f.atoms, f.mass)
     C78H102N30O50P8 268 2507.605568
     >>> f = Formula(from_oligo('AUC G', 'ssrna'))
-    >>> print(f.formula, f.atoms, f.mass)
+    >>> print(f.formula, f.atoms, '%.6f' % f.mass)
     C38H49N15O29P4 135 1303.773804
 
     """
@@ -1183,13 +1161,15 @@ def precision_digits(f, width):
     2
     >>> precision_digits(12345.6789, 5)
     1
-
     """
-    precision = math.log(abs(f), 10)
+
+    precision = math.log(abs(f), 10.0)
     if precision < 0:
         precision = 0
-    precision = width - int(math.floor(precision))
-    precision -= 3 if f < 0 else 2  # sign and decimal point
+    precision = int(width) - int(math.floor(precision))
+
+    precision -= (3 if f < 0 else 2)  # sign and decimal point
+
     if precision < 1:
         precision = 1
     return precision

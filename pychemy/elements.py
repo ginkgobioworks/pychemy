@@ -50,7 +50,7 @@ References
 
 Examples
 --------
->>> from elements import ELEMENTS
+>>> from .elements import ELEMENTS
 >>> len(ELEMENTS)
 109
 >>> str(ELEMENTS[109])
@@ -58,8 +58,8 @@ Examples
 >>> ele = ELEMENTS['C']
 >>> ele.number, ele.symbol, ele.name, ele.eleconfig
 (6, 'C', 'Carbon', '[He] 2s2 2p2')
->>> ele.eleconfig_dict
-{(1, 's'): 2, (2, 'p'): 2, (2, 's'): 2}
+>>> sorted(ele.eleconfig_dict.items())
+[((1, 's'), 2), ((2, 'p'), 2), ((2, 's'), 2)]
 >>> sum(ele.mass for ele in ELEMENTS)
 14659.1115599
 >>> for ele in ELEMENTS:
