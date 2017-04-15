@@ -35,7 +35,7 @@ and descriptive properties of the elements are stored as instance attributes.
 
 :Author: `Christoph Gohlke <http://www.lfd.uci.edu/~gohlke/>`_
 
-:Version: 0.4.0
+:Version: 0.4.1
 
 Requirements
 ------------
