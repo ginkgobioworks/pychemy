@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
   name='pychemy',
-  version='0.4.3',
+  version='0.4.4',
 
   author='Benjie Chen, Ginkgo Bioworks, Christoph Gohlke',
   author_email='benjie@ginkgobioworks.com, devs@ginkgobioworks.com, cgohlke@uci.edu',
