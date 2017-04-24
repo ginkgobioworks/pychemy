@@ -22,7 +22,7 @@ install:
 script:
   - make test-tox-ext
 before_deploy:
-  - make clean
+  - sudo make clean
 deploy:
   provider: pypi
   user: ginkgodev
