@@ -21,6 +21,8 @@ install:
   - make image
 script:
   - make test-tox-ext
+before_deploy:
+  - make clean
 deploy:
   provider: pypi
   user: ginkgodev

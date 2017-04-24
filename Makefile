@@ -1,5 +1,6 @@
-.PHONY: image \
-	clean clean-pyc clean-build \
+.PHONY: \
+	image \
+	clean clean-pyc clean-build clean-cache clean-tox \
 	test test-tox \
 	bump/major bump/minor bump/patch \
 	release
@@ -10,12 +11,18 @@ TOXENV ?= py2
 
 all: test-tox
 
-clean: clean-build clean-pyc
+clean: clean-build clean-pyc clean-cache clean-tox
 
 clean-build:
 	rm -rf build/
 	rm -rf dist/
 	rm -rf *.egg-info
+
+clean-cache:
+	rm -rf .eggs
+
+clean-tox:
+	rm -rf .tox
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
