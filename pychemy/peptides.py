@@ -1,6 +1,9 @@
+import re
+
+from six.moves import xrange
+
 from pychemy.amino_acids import AMINO_ACIDS, LOSSES
 from pychemy.molmass import Formula
-import re
 
 
 # Retreives first amino acid from peptide sequence based on those available in AMINO_ACIDS

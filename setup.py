@@ -24,7 +24,7 @@ setup(
     'Natural Language :: English',
     'Operating System :: OS Independent',
     'Programming Language :: Python :: 2.7',
-    'Programming Language :: Python :: 3.4',
+    'Programming Language :: Python :: 3.5',
     'Topic :: Scientific/Engineering :: Artificial Intelligence',
     'Topic :: Scientific/Engineering :: Artificial Life',
     'Topic :: Scientific/Engineering :: Bio-Informatics',
@@ -34,6 +34,7 @@ setup(
     'Topic :: Scientific/Engineering :: Visualization',
     'Topic :: Software Development :: Libraries :: Python Modules',
   ],
+  python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4',
 
   packages=['pychemy'],
   include_package_data=True,
@@ -41,7 +42,7 @@ setup(
 
   install_requires=[
     'matplotlib',
-    'networkx',
+    'networkx~=1.0',
     'numpy',
     'openbabel',
   ],
