@@ -21,6 +21,7 @@ install:
   - make image
 script:
   - make test-tox-ext
+  - docker-compose run --rm pychemy-${TOXENV} pip --version
 before_deploy:
   - sudo make clean
 deploy:
