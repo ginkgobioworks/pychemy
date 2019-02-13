@@ -41,7 +41,7 @@ setup(
 
   install_requires=[
     'matplotlib',
-    'networkx==1.11',
+    'networkx~=1.0',
     'numpy',
     'openbabel',
   ],
